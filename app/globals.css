@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap');
+
+:root {
+  /* Colors — Auros token set */
+  --color-liquid-abyss: #012624;
+  --color-liquid-deep: #011d1c;
+  --color-liquid-kelp: #003734;
+  --color-liquid-mist: #edfffe;
+  --color-platinum: #ffffff;
+  --color-silver-mist: #bbc7c6;
+  --color-ash: #f2f2f2;
+  --color-slate-deep: #707777;
+  --color-lavender-phosphor: #fde9ff;
+  --gradient-bioluminescent: linear-gradient(90deg, #00827c 0%, #cbfffc 100%);
+  --gradient-aurora: linear-gradient(90deg, #cbfffc 0%, #edfffe 26.25%, #fffdfa 47.57%, #fad1ff 88.96%);
+
+  /* Team accent colors — sampled along the aurora gradient (teal -> lavender-pink) */
+  --accent-research: #00b8ac;
+  --accent-outreach: #22c2c9;
+  --accent-proposal: #6fa8c7;
+  --accent-followup: #c08ce0;
+  --accent-scheduler: #e28fd0;
+
+  /* Typography */
+  --font-matter: 'DM Sans', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Spacing */
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-36: 36px;
+  --spacing-48: 48px;
+  --spacing-68: 68px;
+  --spacing-120: 120px;
+
+  /* Radius (Auros: 16px cards, 6px small/buttons — nothing larger) */
+  --radius-cards: 16px;
+  --radius-small: 6px;
+
+  --page-max-width: 1440px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background: var(--color-liquid-abyss);
+  color: var(--color-silver-mist);
+  font-family: var(--font-matter);
+  font-weight: 400;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ---- Orbit dashboard keyframes (reproduced verbatim — layout/motion unchanged) ---- */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+@keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes dashMove { to { stroke-dashoffset: -20; } }
+@keyframes ringPulse { 0% { transform: scale(1); opacity: .6; } 100% { transform: scale(1.75); opacity: 0; } }
+@keyframes iconFly { 0% { transform: translate(0,0) rotate(0deg); opacity: 1; } 70% { opacity: 1; } 100% { transform: translate(16px,-18px) rotate(14deg); opacity: 0; } }
+@keyframes iconRing { 0%, 100% { transform: rotate(0deg); } 20% { transform: rotate(16deg); } 40% { transform: rotate(-14deg); } 60% { transform: rotate(10deg); } 80% { transform: rotate(-6deg); } }
+@keyframes iconSwing { 0%, 100% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(6px,-4px) rotate(12deg); } }
+@keyframes iconPop { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.3); } 30% { transform: scale(1); } }
+@keyframes breathe { 0%, 100% { transform: scale(1); opacity: .85; } 50% { transform: scale(1.05); opacity: 1; } }
+@keyframes badgePopA { from { opacity: 0; transform: translateY(6px) scale(.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes badgePopB { from { opacity: 0; transform: translateY(6px) scale(.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes rise { 0% { transform: translateY(30px); opacity: 0; } 25% { opacity: .7; } 75% { opacity: .4; } 100% { transform: translateY(-60px); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
