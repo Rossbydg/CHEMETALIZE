@@ -5,7 +5,10 @@ export type ActivityType =
   | "lead_rejected"
   | "lead_stage_changed"
   | "lead_researched"
-  | "email_drafted";
+  | "email_drafted"
+  | "proposal_drafted"
+  | "follow_up_drafted"
+  | "meeting_booked";
 
 export interface ActivityView {
   id: string;

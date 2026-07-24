@@ -1,17 +1,20 @@
 import "server-only";
 import { and, asc, eq, inArray } from "drizzle-orm";
 import { getDb, isDbConfigured } from "@/lib/db";
-import { jobs, leads, outreachDrafts } from "@/lib/db/schema";
+import { jobs, leads, outreachDrafts, proposals } from "@/lib/db/schema";
 import { currentUser } from "@/lib/auth/currentUser";
 import { getCreatorProfile, profileSummary, creatorDisplayName } from "@/lib/profile/store";
 import { getAgent } from "@/lib/agents/store";
 import { toLeadView } from "@/lib/leads/store";
+import { getLatestOutreachDraft } from "@/lib/outreach/store";
 import { logActivity } from "@/lib/activity/store";
 import { draftOutreach } from "@/lib/ai/outreach";
 import { draftResearch } from "@/lib/ai/research";
+import { draftProposal } from "@/lib/ai/proposal";
+import { draftFollowup } from "@/lib/ai/followup";
 import type { ActingAgent } from "@/lib/ai/types";
 
-const HANDLED_KINDS = ["outreach", "research"] as const;
+const HANDLED_KINDS = ["outreach", "research", "proposal", "follow-up"] as const;
 const BATCH_SIZE = 5;
 const CONCURRENCY = 4;
 
@@ -58,6 +61,7 @@ async function processJob(
           subject: result.subject,
           body: result.body,
           rationale: result.rationale,
+          kind: "outreach",
           status: "draft",
         })
         .returning();
@@ -82,6 +86,54 @@ async function processJob(
         text: `Wrote a research brief for ${lead.company || lead.name}`,
       });
       await db.update(jobs).set({ status: "done", finishedAt: new Date(), result: { ok: true } }).where(eq(jobs.id, job.id));
+    } else if (job.kind === "proposal") {
+      const result = await draftProposal(actingAgent, lead, creatorContext, creatorName);
+      const [proposal] = await db
+        .insert(proposals)
+        .values({
+          userId: job.userId,
+          agentId: job.agentId,
+          leadId: lead.id,
+          title: result.title,
+          body: result.body,
+          products: result.packages,
+          status: "draft",
+        })
+        .returning();
+
+      await logActivity({
+        userId: job.userId,
+        agentId: job.agentId,
+        type: "proposal_drafted",
+        leadId: lead.id,
+        text: `Drafted a proposal for ${lead.company || lead.name}`,
+      });
+      await db.update(jobs).set({ status: "done", finishedAt: new Date(), result: { proposalId: proposal.id } }).where(eq(jobs.id, job.id));
+    } else if (job.kind === "follow-up") {
+      const priorDraft = await getLatestOutreachDraft(job.userId, lead.id);
+      const result = await draftFollowup(actingAgent, lead, priorDraft, creatorContext, creatorName);
+      const [draft] = await db
+        .insert(outreachDrafts)
+        .values({
+          userId: job.userId,
+          agentId: job.agentId,
+          leadId: lead.id,
+          subject: result.subject,
+          body: result.body,
+          rationale: result.rationale,
+          kind: "follow-up",
+          status: "draft",
+        })
+        .returning();
+
+      await logActivity({
+        userId: job.userId,
+        agentId: job.agentId,
+        type: "follow_up_drafted",
+        leadId: lead.id,
+        text: `Followed up with ${lead.company || lead.name}`,
+      });
+      await db.update(jobs).set({ status: "done", finishedAt: new Date(), result: { draftId: draft.id } }).where(eq(jobs.id, job.id));
     }
   } catch (err) {
     await db

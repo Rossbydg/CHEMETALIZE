@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, jsonb, integer, boolean, primaryKey, uuid, index } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, jsonb, integer, boolean, primaryKey, uuid, index, serial } from "drizzle-orm/pg-core";
 import type { PlatformStat, Audience } from "@/lib/profile/types";
 import type { CapabilityId } from "@/lib/agentTypes";
 import type { LeadStatus, LeadSource, LeadReview, ResearchBrief } from "@/lib/leads/types";
@@ -189,6 +189,7 @@ export const outreachDrafts = pgTable(
     subject: text("subject"),
     body: text("body").notNull(),
     rationale: text("rationale"),
+    kind: text("kind").$type<"outreach" | "follow-up">().notNull().default("outreach"),
     status: text("status").$type<"draft" | "sent">().notNull().default("draft"),
     dismissed: boolean("dismissed").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
@@ -198,3 +199,55 @@ export const outreachDrafts = pgTable(
 );
 
 export type DbOutreachDraft = typeof outreachDrafts.$inferSelect;
+
+export const proposals = pgTable(
+  "proposals",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    agentId: text("agent_id"),
+    leadId: uuid("lead_id").notNull().references(() => leads.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    body: text("body").notNull(),
+    products: jsonb("products").$type<string[]>().default([]).notNull(),
+    status: text("status").$type<"draft" | "sent">().notNull().default("draft"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+  },
+  (t) => ({ userCreatedIdx: index("proposals_user_idx").on(t.userId, t.createdAt) })
+);
+
+export type DbProposal = typeof proposals.$inferSelect;
+
+export const meetings = pgTable(
+  "meetings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    agentId: text("agent_id"),
+    leadId: uuid("lead_id").references(() => leads.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    kind: text("kind").$type<"call" | "shoot" | "deliverable">().notNull().default("call"),
+    whenAt: timestamp("when_at", { withTimezone: true }).notNull(),
+    whenLabel: text("when_label"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({ userWhenIdx: index("meetings_user_when_idx").on(t.userId, t.whenAt) })
+);
+
+export type DbMeeting = typeof meetings.$inferSelect;
+
+export const messages = pgTable(
+  "messages",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    agentId: text("agent_id"),
+    who: text("who").$type<"ai" | "me">().notNull(),
+    text: text("text").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({ userIdIdx: index("messages_user_id_idx").on(t.userId, t.id) })
+);
+
+export type DbMessage = typeof messages.$inferSelect;

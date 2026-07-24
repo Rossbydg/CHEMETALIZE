@@ -36,7 +36,7 @@ export async function extractBrandCandidates(niche: string, results: SearchResul
       system,
       [{ role: "user", text: facts }],
       EXTRACT_SCHEMA,
-      { maxTokens: 700, temperature: 0.4 }
+      { maxTokens: 1000, temperature: 0.4 }
     );
 
     const bestUrlFor = (name: string) =>

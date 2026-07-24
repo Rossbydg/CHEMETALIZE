@@ -5,6 +5,10 @@ import { av, hubIcon, CAPABILITY_ICON_TYPE } from "@/lib/visuals";
 import { css, Box } from "@/components/primitives";
 import { AGENT_TYPES, TEAM_TEMPLATES, type AgentType, type TeamTemplate } from "@/lib/agentTypes";
 import { DEMO_STATS, DEMO_ACTIVITY, type WorkspaceStats, type ActivityItem } from "@/lib/demoData";
+import { fetchLiveWork } from "@/lib/dashboard/actions";
+import type { LiveWork } from "@/lib/dashboard/types";
+
+const LIVE_POLL_MS = 3000;
 
 // [animation, tint] per activity type — the glyph itself comes from hubIcon().
 const hubIcons: Record<string, [string, string]> = {
@@ -24,6 +28,7 @@ interface HomeClientProps {
   teams?: TeamTemplate[];
   initialStats?: WorkspaceStats;
   initialActs?: ActivityItem[];
+  live?: boolean;
 }
 
 export default function HomeClient({
@@ -31,12 +36,14 @@ export default function HomeClient({
   teams = TEAM_TEMPLATES,
   initialStats = DEMO_STATS,
   initialActs = DEMO_ACTIVITY,
+  live = false,
 }: HomeClientProps) {
   const byId = (id: string) => agents.find((a) => a.id === id);
 
   const [hubTeam, setHubTeam] = useState("all");
   const [dims, setDims] = useState({ w: 1280, h: 800 });
   const [reduced, setReduced] = useState(false);
+  const [liveWork, setLiveWork] = useState<LiveWork[] | null>(null);
   const ws = initialStats;
   const acts = initialActs;
   const paMap = new Map((ws?.perAgent ?? []).map((p) => [p.agentId, p]));
@@ -61,6 +68,23 @@ export default function HomeClient({
     return () => clearInterval(hub);
   }, []);
 
+  // Which agent is working on which brand right now — polled so the pulse reflects reality
+  // while this page is open, not just whatever was true at the last full page load.
+  useEffect(() => {
+    if (!live) return;
+    let cancelled = false;
+    async function poll() {
+      const work = await fetchLiveWork();
+      if (!cancelled) setLiveWork(work);
+    }
+    poll();
+    const interval = setInterval(poll, LIVE_POLL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [live]);
+
   const hubMembers = (
     hubTeam === "all" ? agents.slice(0, 8) : (teams.find((t) => t.id === hubTeam) || teams[0])?.members.map((id) => byId(id))
   ).filter(Boolean) as AgentType[];
@@ -71,13 +95,16 @@ export default function HomeClient({
     const y = Math.round(262 + Math.sin(ang) * 186);
     const type = CAPABILITY_ICON_TYPE[a.capabilities?.[0] ?? ""] || "writing";
     const ic = hubIcons[type];
-    const m = statusMeta(a.status);
+    const liveEntry = liveWork?.find((w) => w.agentId === a.id) ?? null;
+    const working = Boolean(liveEntry) || a.status === "working";
+    const m = statusMeta(working ? "working" : a.status);
     const latest = acts.find((f) => f.agentId === a.id);
-    return { a, i, x, y, m, ic, type, badge: latest ? latest.text.slice(0, 40) : a.status === "working" ? "Working…" : "Idle" };
+    const badge = liveEntry ? `Working on ${liveEntry.brandLabel}` : latest ? latest.text.slice(0, 40) : working ? "Working…" : "Idle";
+    return { a, i, x, y, m, ic, type, badge, working };
   });
   const collabs = HN >= 5 ? [[0, 2], [1, 4]] : [];
 
-  const hubWorking = ws?.activeAgents ?? 0;
+  const hubWorking = live && liveWork !== null ? new Set(liveWork.map((w) => w.agentId)).size : ws?.activeAgents ?? 0;
   const leadsWorked = ws?.leadsWorked ?? 0;
   const tasksRunning = ws?.tasksRunning ?? 0;
   const monthLabel = new Date().toLocaleString("en-US", { month: "long" }).toUpperCase();
@@ -168,7 +195,7 @@ export default function HomeClient({
                 </div>
               </div>
               <div style={css("display:flex;align-items:center;gap:5px;margin-top:2px")}>
-                <span style={css("width:7px;height:7px;border-radius:50%;background:" + n.m.dot + ";flex:none;" + (n.a.status === "working" ? "animation:pulse 2s infinite" : ""))} />
+                <span style={css("width:7px;height:7px;border-radius:50%;background:" + n.m.dot + ";flex:none;" + (n.working ? "animation:pulse 2s infinite" : ""))} />
                 <span style={css("font-size:12px;font-weight:500;color:#ffffff")}>{n.a.name}</span>
               </div>
               <div style={css("width:60px;height:3px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden")}>

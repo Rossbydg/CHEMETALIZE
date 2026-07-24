@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { SignOutButton } from "@clerk/nextjs";
 import { css } from "@/lib/style";
+import NotificationsBell from "./NotificationsBell";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard" },
@@ -92,6 +93,7 @@ export default function AppShell({ userName, children }: { userName: string; chi
                 <path d="m20 20-5-5" />
               </svg>
             </button>
+            <NotificationsBell />
           </div>
         </header>
         <main style={css("flex:1;min-width:0")}>{children}</main>

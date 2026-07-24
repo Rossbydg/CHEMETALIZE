@@ -47,7 +47,18 @@ export default function DraftCard({
       )}
     >
       <div style={css("display:flex;align-items:center;justify-content:space-between;gap:12px")}>
-        <div style={css("font-size:12px;font-weight:500;color:#bbc7c6")}>{brandLabel}</div>
+        <div style={css("display:flex;align-items:center;gap:8px")}>
+          <span style={css("font-size:12px;font-weight:500;color:#bbc7c6")}>{brandLabel}</span>
+          {draft.kind === "follow-up" && (
+            <span
+              style={css(
+                "font-size:10px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:#c08ce0;background:rgba(192,140,224,.14);border-radius:99px;padding:2px 8px"
+              )}
+            >
+              Follow-up
+            </span>
+          )}
+        </div>
         <div style={css("font-size:11px;color:#707777")}>{new Date(draft.createdAt).toLocaleDateString()}</div>
       </div>
       {draft.subject && <div style={css("font-size:13.5px;font-weight:500;color:#ffffff")}>{draft.subject}</div>}

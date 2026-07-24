@@ -8,10 +8,14 @@ import { updateLeadStage, updateLeadAgent } from "@/lib/leads/actions";
 import { enqueueJob } from "@/lib/jobs/actions";
 import JobActionButton from "./JobActionButton";
 import DraftCard from "./DraftCard";
+import ProposalCard from "./ProposalCard";
+import BookMeetingForm from "@/components/calendar/BookMeetingForm";
 import type { LeadView } from "@/lib/leads/types";
 import type { AgentView } from "@/lib/agents/types";
 import type { CapabilityId } from "@/lib/agentTypes";
 import type { OutreachDraftView } from "@/lib/outreach/types";
+import type { ProposalView } from "@/lib/proposals/types";
+import type { MeetingView } from "@/lib/meetings/types";
 
 const selectStyle =
   "background:#012624;border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:8px 10px;font-size:12.5px;color:#edfffe;outline:none";
@@ -27,10 +31,14 @@ export default function LeadDetail({
   lead,
   agents,
   drafts,
+  proposals,
+  meetings,
 }: {
   lead: LeadView;
   agents: AgentView[];
   drafts: OutreachDraftView[];
+  proposals: ProposalView[];
+  meetings: MeetingView[];
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -51,6 +59,9 @@ export default function LeadDetail({
 
   const outreachAgent = agentFor(agents, "outreach", lead.agentId);
   const researchAgent = agentFor(agents, "research", lead.agentId);
+  const proposalAgent = agentFor(agents, "proposal", lead.agentId);
+  const followupAgent = agentFor(agents, "follow-up", lead.agentId);
+  const schedulerAgent = agentFor(agents, "book-meeting", lead.agentId);
 
   return (
     <div style={css("padding:36px 40px;display:flex;flex-direction:column;gap:28px;max-width:680px")}>
@@ -149,13 +160,20 @@ export default function LeadDetail({
       </div>
 
       <div style={css("display:flex;flex-direction:column;gap:14px")}>
-        <div style={css("display:flex;align-items:center;justify-content:space-between;gap:12px")}>
+        <div style={css("display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap")}>
           <div style={css("font-size:14px;font-weight:500;color:#ffffff")}>Pitches</div>
-          <JobActionButton
-            label="Draft pitch"
-            pendingLabel="Drafting…"
-            enqueue={() => enqueueJob("outreach", { leadId: lead.id, agentId: outreachAgent?.id ?? null })}
-          />
+          <div style={css("display:flex;gap:8px")}>
+            <JobActionButton
+              label="Follow up"
+              pendingLabel="Following up…"
+              enqueue={() => enqueueJob("follow-up", { leadId: lead.id, agentId: followupAgent?.id ?? null })}
+            />
+            <JobActionButton
+              label="Draft pitch"
+              pendingLabel="Drafting…"
+              enqueue={() => enqueueJob("outreach", { leadId: lead.id, agentId: outreachAgent?.id ?? null })}
+            />
+          </div>
         </div>
         {drafts.length ? (
           <div style={css("display:flex;flex-direction:column;gap:12px")}>
@@ -166,6 +184,48 @@ export default function LeadDetail({
         ) : (
           <p style={css("font-size:13px;color:#bbc7c6;margin:0;line-height:1.5")}>No pitch drafted yet.</p>
         )}
+      </div>
+
+      <div style={css("display:flex;flex-direction:column;gap:14px")}>
+        <div style={css("display:flex;align-items:center;justify-content:space-between;gap:12px")}>
+          <div style={css("font-size:14px;font-weight:500;color:#ffffff")}>Proposals</div>
+          <JobActionButton
+            label="Draft proposal"
+            pendingLabel="Drafting…"
+            enqueue={() => enqueueJob("proposal", { leadId: lead.id, agentId: proposalAgent?.id ?? null })}
+          />
+        </div>
+        {proposals.length ? (
+          <div style={css("display:flex;flex-direction:column;gap:12px")}>
+            {proposals.map((p) => (
+              <ProposalCard key={p.id} proposal={p} leadEmail={lead.email} />
+            ))}
+          </div>
+        ) : (
+          <p style={css("font-size:13px;color:#bbc7c6;margin:0;line-height:1.5")}>No proposal drafted yet.</p>
+        )}
+      </div>
+
+      <div style={css(cardStyle)}>
+        <div style={css("font-size:14px;font-weight:500;color:#ffffff")}>Book a call</div>
+        {meetings.length > 0 && (
+          <div style={css("display:flex;flex-direction:column;gap:8px")}>
+            {meetings.map((m) => (
+              <div key={m.id} style={css("display:flex;align-items:center;justify-content:space-between;background:#012624;border-radius:8px;padding:10px 14px")}>
+                <span style={css("font-size:13px;font-weight:500;color:#ffffff")}>{m.title}</span>
+                <span style={css("font-size:12px;color:#bbc7c6")}>
+                  {m.whenLabel || new Date(m.whenAt).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+        <BookMeetingForm
+          defaultTitle={`Call with ${lead.company || lead.name}`}
+          leadId={lead.id}
+          agentId={schedulerAgent?.id ?? null}
+          onBooked={() => router.refresh()}
+        />
       </div>
     </div>
   );

@@ -41,7 +41,7 @@ export async function draftResearch(agent: ActingAgent, lead: LeadView, creatorC
 
   try {
     const result = await geminiJSON<ResearchBrief>(system, [{ role: "user", text: facts }], RESEARCH_SCHEMA, {
-      maxTokens: 500,
+      maxTokens: 800,
       temperature: 0.6,
     });
     return {

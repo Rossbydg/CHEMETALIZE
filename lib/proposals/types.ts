@@ -1,11 +1,10 @@
-export interface OutreachDraftView {
+export interface ProposalView {
   id: string;
   leadId: string;
   agentId: string | null;
-  subject: string | null;
+  title: string;
   body: string;
-  rationale: string | null;
-  kind: "outreach" | "follow-up";
+  packages: string[];
   status: "draft" | "sent";
   createdAt: string;
 }

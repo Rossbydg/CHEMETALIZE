@@ -69,7 +69,7 @@ export async function draftOutreach(
 
   try {
     const result = await geminiJSON<OutreachResult>(system, [{ role: "user", text: facts }], OUTREACH_SCHEMA, {
-      maxTokens: 700,
+      maxTokens: 1000,
       temperature: 0.6,
     });
     return {
