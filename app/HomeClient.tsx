@@ -28,6 +28,7 @@ interface HomeClientProps {
   teams?: TeamTemplate[];
   initialStats?: WorkspaceStats;
   initialActs?: ActivityItem[];
+  avatarUrl?: string | null;
   live?: boolean;
 }
 
@@ -36,6 +37,7 @@ export default function HomeClient({
   teams = TEAM_TEMPLATES,
   initialStats = DEMO_STATS,
   initialActs = DEMO_ACTIVITY,
+  avatarUrl = null,
   live = false,
 }: HomeClientProps) {
   const byId = (id: string) => agents.find((a) => a.id === id);
@@ -167,14 +169,26 @@ export default function HomeClient({
             <div style={css("position:absolute;left:0;top:0;right:0;bottom:0;border-radius:50%;border:2px solid rgba(250,209,255,.4);animation:ringPulse 3s ease-out 1.5s infinite")} />
             <div style={css("width:124px;height:124px;border-radius:50%;background:conic-gradient(from 0deg,#00827c,#cbfffc,#fad1ff,#00827c);display:flex;align-items:center;justify-content:center;box-shadow:0 0 44px rgba(0,194,184,.35)")}>
               <div style={css("width:106px;height:106px;border-radius:50%;background:#011d1c;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden")}>
-                <div style={css("font-family:var(--font-matter);font-size:26px;font-weight:500;color:#fde9ff;line-height:1;letter-spacing:-.02em")}>{leadsWorked}</div>
-                <div style={css("font-size:8.5px;font-weight:500;letter-spacing:.12em;color:#bbc7c6;margin-top:4px;text-align:center;line-height:1.4;text-transform:uppercase")}>
-                  Brands worked<br />{monthLabel}
-                </div>
+                {avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={avatarUrl} alt="" style={css("width:100%;height:100%;object-fit:cover;border-radius:50%")} />
+                ) : (
+                  <>
+                    <div style={css("font-family:var(--font-matter);font-size:26px;font-weight:500;color:#fde9ff;line-height:1;letter-spacing:-.02em")}>{leadsWorked}</div>
+                    <div style={css("font-size:8.5px;font-weight:500;letter-spacing:.12em;color:#bbc7c6;margin-top:4px;text-align:center;line-height:1.4;text-transform:uppercase")}>
+                      Brands worked<br />{monthLabel}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
-          <div style={css("display:flex;gap:8px")}>
+          <div style={css("display:flex;flex-direction:column;align-items:center;gap:8px")}>
+            {avatarUrl && (
+              <div style={css("display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:500;letter-spacing:.03em;color:#fde9ff;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:99px;padding:4px 11px;backdrop-filter:blur(6px)")}>
+                {leadsWorked} brands worked · {monthLabel}
+              </div>
+            )}
             <div style={css("display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:500;letter-spacing:.03em;color:#edfffe;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:99px;padding:4px 11px;backdrop-filter:blur(6px)")}>
               <svg width="11" height="11" viewBox="0 0 24 24" fill="#fde9ff" style={{ flex: "none" }} aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" /></svg>
               {hubWorking} working · {tasksRunning} tasks

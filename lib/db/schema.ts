@@ -24,6 +24,17 @@ export const creatorProfile = pgTable("creator_profile", {
   tone: text("tone"),
   pastDeals: text("past_deals"),
   rateFloor: integer("rate_floor"),
+  tiktokOpenId: text("tiktok_open_id"),
+  tiktokDisplayName: text("tiktok_display_name"),
+  tiktokAvatarUrl: text("tiktok_avatar_url"),
+  tiktokFollowerCount: integer("tiktok_follower_count"),
+  tiktokFollowingCount: integer("tiktok_following_count"),
+  tiktokLikesCount: integer("tiktok_likes_count"),
+  tiktokVideoCount: integer("tiktok_video_count"),
+  tiktokAccessToken: text("tiktok_access_token"),
+  tiktokRefreshToken: text("tiktok_refresh_token"),
+  tiktokTokenExpiresAt: timestamp("tiktok_token_expires_at", { withTimezone: true }),
+  tiktokConnectedAt: timestamp("tiktok_connected_at", { withTimezone: true }),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
