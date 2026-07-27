@@ -9,6 +9,8 @@ import { checkAndRecordAttempt, clientIp } from "./rateLimit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const OWNER_EMAIL = process.env.OWNER_EMAIL || "rossby.eclof@gmail.com";
+const OWNER_TIMEZONE = process.env.OWNER_TIMEZONE || "Asia/Manila";
+const OWNER_TIMEZONE_LABEL = "Manila time zone (UTC+8)";
 
 export interface BookDemoInput {
   name: string;
@@ -68,12 +70,17 @@ export async function bookDemo(input: BookDemoInput): Promise<BookDemoResult> {
   });
 
   try {
-    // UTC, explicitly labeled as such, since email can't adapt to the reader's timezone —
-    // the calendar in the app is the source of truth for "what time is this in my timezone."
-    const utcLabel = whenAt.toLocaleString("en-US", {
+    // Spelled out as "Manila local = UTC" rather than a bare UTC timestamp — a raw UTC time
+    // is easy to misread (e.g. "2:00 AM UTC" glanced at as "2pm") without the explicit anchor.
+    const localLabel = whenAt.toLocaleString("en-US", {
       weekday: "short",
       month: "short",
       day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: OWNER_TIMEZONE,
+    });
+    const utcLabel = whenAt.toLocaleString("en-US", {
       hour: "numeric",
       minute: "2-digit",
       timeZone: "UTC",
@@ -82,9 +89,10 @@ export async function bookDemo(input: BookDemoInput): Promise<BookDemoResult> {
       to: OWNER_EMAIL,
       subject: `New demo booked — ${name}`,
       text: [
-        `${name} (${email}) booked a product demo for ${utcLabel} UTC.`,
+        `${name} (${email}) booked a product demo.`,
+        `\n${OWNER_TIMEZONE_LABEL}, ${localLabel} local = ${utcLabel} UTC.`,
         input.notes?.trim() ? `\nNotes: ${input.notes.trim()}` : "",
-        `\nIt's already on your calendar in Agentic Sales Team, shown there in your own local time.`,
+        `\nIt's already on your calendar in Agentic Sales Team.`,
       ].join(""),
     });
   } catch (err) {
