@@ -19,7 +19,7 @@ export default function Features() {
           A full deal team, minus the headcount.
         </h2>
       </div>
-      <div style={css("display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px")}>
+      <div className="features-grid" style={css("display:grid;gap:20px")}>
         {FEATURES.map((f) => (
           <ScrollReveal key={f.title}>
             <div style={css("background:#003734;border-radius:16px;padding:36px;height:100%")}>

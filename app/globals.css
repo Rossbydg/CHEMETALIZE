@@ -160,3 +160,18 @@ button {
     display: none !important;
   }
 }
+
+/* ---- Features grid: fixed 3 columns on desktop, collapsing on smaller screens ---- */
+.features-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 900px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 560px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
