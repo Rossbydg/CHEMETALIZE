@@ -75,7 +75,11 @@ export async function bookDemo(input: BookDemoInput): Promise<BookDemoResult> {
   // surfacing this request at all. Targets inserted.id only, never other rows.
   try {
     if (!process.env.RESEND_API_KEY) {
-      throw new Error("RESEND_API_KEY is not set in this runtime");
+      const nearMatches = Object.keys(process.env).filter((k) => k.toUpperCase().includes("RESEND"));
+      const envCount = Object.keys(process.env).length;
+      throw new Error(
+        `RESEND_API_KEY missing. envVarCount=${envCount} resendLikeKeys=${JSON.stringify(nearMatches)}`
+      );
     }
     // UTC, explicitly labeled as such, since email can't adapt to the reader's timezone —
     // the calendar in the app is the source of truth for "what time is this in my timezone."
