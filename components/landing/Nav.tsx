@@ -15,6 +15,7 @@ export default async function Nav() {
         <a href="#features" style={css("font-size:12px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#bbc7c6")}>Features</a>
         <a href="#how-it-works" style={css("font-size:12px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#bbc7c6")}>How it works</a>
         <a href="#who-its-for" style={css("font-size:12px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#bbc7c6")}>Who it&apos;s for</a>
+        <a href="/demo" style={css("font-size:12px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#bbc7c6")}>Book a demo</a>
       </nav>
       <div style={css("display:flex;align-items:center;gap:20px")}>
         {userId ? (
