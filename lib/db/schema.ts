@@ -262,3 +262,14 @@ export const messages = pgTable(
 );
 
 export type DbMessage = typeof messages.$inferSelect;
+
+// No userId here on purpose — this guards a public, unauthenticated endpoint (demo booking) by IP.
+export const demoBookingAttempts = pgTable(
+  "demo_booking_attempts",
+  {
+    id: serial("id").primaryKey(),
+    ip: text("ip").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => ({ ipCreatedIdx: index("demo_booking_attempts_ip_created_idx").on(t.ip, t.createdAt) })
+);

@@ -1,9 +1,11 @@
 "use server";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { getDb, isDbConfigured } from "@/lib/db";
 import { meetings, users } from "@/lib/db/schema";
 import { sendOwnerEmail } from "@/lib/email/resend";
+import { checkAndRecordAttempt, clientIp } from "./rateLimit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const OWNER_EMAIL = process.env.OWNER_EMAIL || "rossby.eclof@gmail.com";
@@ -25,6 +27,15 @@ export interface BookDemoResult {
 // re-validated server-side rather than trusted from the form.
 export async function bookDemo(input: BookDemoInput): Promise<BookDemoResult> {
   if (!isDbConfigured()) return { ok: false, error: "Booking isn't available right now." };
+
+  const ip = clientIp(headers());
+  const rate = await checkAndRecordAttempt(ip);
+  if (!rate.ok) {
+    return {
+      ok: false,
+      error: `Too many booking attempts — please try again in ${rate.retryAfterMinutes} minute${rate.retryAfterMinutes === 1 ? "" : "s"}.`,
+    };
+  }
 
   const name = input.name.trim().slice(0, 120);
   const email = input.email.trim().slice(0, 200);
