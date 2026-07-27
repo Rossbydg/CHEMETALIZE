@@ -26,8 +26,22 @@ export default function BookDemoForm() {
 
   function submit() {
     setError(null);
+
+    // Built here, in the visitor's own browser, so "10:00" means 10am in *their* timezone —
+    // if this were built server-side instead, Vercel's UTC runtime would silently misread it.
+    const local = new Date(`${form.date}T${form.time}`);
+    if (isNaN(local.getTime())) {
+      setError("Please pick a valid date and time.");
+      return;
+    }
+
     startTransition(async () => {
-      const res = await bookDemo(form);
+      const res = await bookDemo({
+        name: form.name,
+        email: form.email,
+        whenAt: local.toISOString(),
+        notes: form.notes,
+      });
       if (res.ok) {
         setDone(true);
       } else {
