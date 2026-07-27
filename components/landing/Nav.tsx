@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
 import { css } from "@/lib/style";
@@ -8,8 +9,11 @@ export default async function Nav() {
 
   return (
     <header style={css("position:relative;z-index:5;max-width:var(--page-max-width);margin:0 auto;height:80px;display:flex;align-items:center;justify-content:space-between;padding:0 26px")}>
-      <div style={css("font-family:var(--font-matter);font-size:16px;font-weight:500;letter-spacing:-.01em;color:#ffffff")}>
-        Agentic Sales Team
+      <div style={css("display:flex;align-items:center;gap:10px")}>
+        <Image src="/chemetalize-logo.png" alt="CheMetaLize" width={32} height={32} priority style={{ flex: "none" }} />
+        <div style={css("font-family:var(--font-matter);font-size:16px;font-weight:500;letter-spacing:-.01em;color:#ffffff")}>
+          Agentic Sales Team
+        </div>
       </div>
       <nav className="nav-links-desktop" style={css("display:flex;gap:24px;align-items:center")}>
         <a href="#features" style={css("font-size:12px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#bbc7c6")}>Features</a>

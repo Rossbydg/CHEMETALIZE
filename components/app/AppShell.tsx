@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import type { ReactNode } from "react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { SignOutButton } from "@clerk/nextjs";
@@ -35,8 +36,11 @@ export default function AppShell({ userName, children }: { userName: string; chi
         className={"app-sidebar" + (navOpen ? " open" : "")}
         style={css("width:220px;flex:none;background:#011d1c;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;padding:24px 16px")}
       >
-        <div style={css("font-family:var(--font-matter);font-size:15px;font-weight:500;color:#ffffff;padding:0 8px 24px")}>
-          Agentic Sales Team
+        <div style={css("display:flex;align-items:center;gap:8px;padding:0 8px 24px")}>
+          <Image src="/chemetalize-logo.png" alt="CheMetaLize" width={28} height={28} priority style={{ flex: "none" }} />
+          <div style={css("font-family:var(--font-matter);font-size:15px;font-weight:500;color:#ffffff")}>
+            Agentic Sales Team
+          </div>
         </div>
         <nav style={css("display:flex;flex-direction:column;gap:2px;flex:1")}>
           {NAV_ITEMS.map((item) => {
@@ -92,6 +96,7 @@ export default function AppShell({ userName, children }: { userName: string; chi
                 <path d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
+            <Image src="/chemetalize-logo.png" alt="CheMetaLize" width={24} height={24} priority style={{ flex: "none" }} />
             <span style={css("font-family:var(--font-matter);font-size:14px;font-weight:500;color:#ffffff;white-space:nowrap")}>
               Agentic Sales Team
             </span>
