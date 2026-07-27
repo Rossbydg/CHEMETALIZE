@@ -11,7 +11,7 @@ export default async function Nav() {
       <div style={css("font-family:var(--font-matter);font-size:16px;font-weight:500;letter-spacing:-.01em;color:#ffffff")}>
         Agentic Sales Team
       </div>
-      <nav style={css("display:flex;gap:24px;align-items:center")}>
+      <nav className="nav-links-desktop" style={css("display:flex;gap:24px;align-items:center")}>
         <a href="#features" style={css("font-size:12px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#bbc7c6")}>Features</a>
         <a href="#how-it-works" style={css("font-size:12px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#bbc7c6")}>How it works</a>
         <a href="#who-its-for" style={css("font-size:12px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#bbc7c6")}>Who it&apos;s for</a>

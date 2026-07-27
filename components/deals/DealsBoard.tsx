@@ -28,7 +28,7 @@ export default function DealsBoard({
   const leadsById = new Map(leads.map((l) => [l.id, l]));
 
   return (
-    <div style={css("padding:36px 40px;display:flex;flex-direction:column;gap:40px")}>
+    <div style={css("padding:clamp(16px,4vw,36px) clamp(16px,5vw,40px);display:flex;flex-direction:column;gap:40px")}>
       <section style={css("display:flex;flex-direction:column;gap:20px")}>
         <div style={css("display:flex;align-items:center;justify-content:space-between")}>
           <div>

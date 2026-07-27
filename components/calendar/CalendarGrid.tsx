@@ -61,7 +61,7 @@ export default function CalendarGrid({ meetings }: { meetings: MeetingView[] }) 
             <div
               key={i}
               style={css(
-                "min-height:88px;border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:4px;background:" +
+                "min-height:clamp(52px,15vw,88px);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:4px;background:" +
                   (d ? "#003734" : "transparent") +
                   (d && isToday(d) ? ";border:1px solid rgba(0,194,184,.5)" : "")
               )}

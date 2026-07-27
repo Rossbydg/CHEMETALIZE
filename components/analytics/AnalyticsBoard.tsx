@@ -21,7 +21,7 @@ export default function AnalyticsBoard({ data, agents }: { data: AnalyticsData; 
   ];
 
   return (
-    <div style={css("padding:36px 40px;display:flex;flex-direction:column;gap:32px")}>
+    <div style={css("padding:clamp(16px,4vw,36px) clamp(16px,5vw,40px);display:flex;flex-direction:column;gap:32px")}>
       <div>
         <div style={css("font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#bbc7c6")}>Analytics</div>
         <h1 style={css("font-family:var(--font-matter);font-weight:500;font-size:24px;color:#ffffff;margin:8px 0 0")}>Your real results</h1>

@@ -37,7 +37,7 @@ export default function AddLeadForm({ agents, onClose }: { agents: AgentView[]; 
     <div style={css("background:#003734;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:14px;max-width:520px")}>
       <div style={css("font-size:15px;font-weight:500;color:#ffffff")}>Add a brand</div>
 
-      <div style={css("display:grid;grid-template-columns:1fr 1fr;gap:12px")}>
+      <div className="form-grid-2" style={css("display:grid;grid-template-columns:1fr 1fr;gap:12px")}>
         <div>
           <label style={css(labelStyle)}>Name</label>
           <input autoFocus style={css(inputStyle)} value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Contact or brand name" />

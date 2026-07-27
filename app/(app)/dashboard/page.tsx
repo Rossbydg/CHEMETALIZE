@@ -23,7 +23,7 @@ export default async function DashboardPage() {
     : [undefined, undefined, undefined, undefined, undefined];
 
   return (
-    <div style={css("padding:24px 28px;display:flex;flex-direction:column;gap:16px")}>
+    <div style={css("padding:clamp(14px,4vw,24px) clamp(16px,5vw,28px);display:flex;flex-direction:column;gap:16px")}>
       <div style={css("font-family:var(--font-matter);font-size:18px;font-weight:500;color:#ffffff")}>
         Welcome back, {firstName}
       </div>

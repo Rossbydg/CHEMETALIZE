@@ -64,7 +64,7 @@ export default function LeadDetail({
   const schedulerAgent = agentFor(agents, "book-meeting", lead.agentId);
 
   return (
-    <div style={css("padding:36px 40px;display:flex;flex-direction:column;gap:28px;max-width:680px")}>
+    <div style={css("padding:clamp(16px,4vw,36px) clamp(16px,5vw,40px);display:flex;flex-direction:column;gap:28px;max-width:680px")}>
       <div>
         <Link href="/deals" style={css("font-size:12px;color:#bbc7c6")}>
           ← Back to pipeline

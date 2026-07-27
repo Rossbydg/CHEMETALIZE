@@ -91,3 +91,72 @@ button {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---- App shell: sidebar becomes a slide-in drawer below tablet width ---- */
+@media (max-width: 860px) {
+  .app-shell-hamburger { display: flex !important; }
+  .app-shell-header-left { display: flex !important; }
+  .app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 40;
+    transform: translateX(-100%);
+    box-shadow: 0 0 32px rgba(0,0,0,.4);
+  }
+  .app-sidebar.open {
+    transform: translateX(0);
+  }
+  .app-sidebar-backdrop.open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 30;
+  }
+}
+
+/* ---- Chat: mention list becomes a horizontal strip above the thread below tablet width ---- */
+@media (max-width: 760px) {
+  .chat-board {
+    flex-direction: column-reverse;
+    height: auto !important;
+    min-height: calc(100dvh - 64px);
+  }
+  .chat-mentions {
+    width: 100% !important;
+    flex-direction: row !important;
+    overflow-x: auto;
+    gap: 14px !important;
+  }
+  .chat-mentions > div {
+    flex: none;
+    max-width: 140px;
+  }
+}
+
+/* ---- Profile platform rows: 5 columns -> 2 below tablet width ---- */
+@media (max-width: 640px) {
+  .platform-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .platform-row > button {
+    grid-column: 2 / 3;
+    justify-self: end;
+  }
+}
+
+/* ---- Generic 2-column form grids: stack to 1 column on phones ---- */
+@media (max-width: 480px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ---- Landing nav: hide anchor links below tablet width, keep logo + CTA ---- */
+@media (max-width: 760px) {
+  .nav-links-desktop {
+    display: none !important;
+  }
+}

@@ -12,7 +12,7 @@ export default function PrivacyPage() {
   return (
     <main>
       <Nav />
-      <section style={css("max-width:720px;margin:0 auto;padding:20px 26px 80px")}>
+      <section style={css("max-width:720px;margin:0 auto;padding:clamp(14px,4vw,20px) clamp(16px,5vw,26px) 80px")}>
         <div style={css("font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#bbc7c6")}>Legal</div>
         <h1 style={css("font-family:var(--font-matter);font-weight:500;font-size:32px;color:#ffffff;margin:8px 0 24px")}>Privacy Policy</h1>
 

@@ -35,7 +35,7 @@ export default function AgentDetail({ agent }: { agent: AgentView }) {
 
   if (editing) {
     return (
-      <div style={css("padding:36px 40px;max-width:520px")}>
+      <div style={css("padding:clamp(16px,4vw,36px) clamp(16px,5vw,40px);max-width:520px")}>
         <AgentForm
           title={`Edit ${agent.name}`}
           capabilitiesLocked={agent.isPreset}
@@ -58,7 +58,7 @@ export default function AgentDetail({ agent }: { agent: AgentView }) {
   }
 
   return (
-    <div style={css("padding:36px 40px;display:flex;flex-direction:column;gap:28px;max-width:640px")}>
+    <div style={css("padding:clamp(16px,4vw,36px) clamp(16px,5vw,40px);display:flex;flex-direction:column;gap:28px;max-width:640px")}>
       <div style={css("display:flex;align-items:center;gap:16px")}>
         <AgentAvatar agent={agent} size={64} />
         <div>

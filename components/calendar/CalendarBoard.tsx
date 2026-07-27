@@ -13,7 +13,7 @@ export default function CalendarBoard({ meetings }: { meetings: MeetingView[] })
   const upcoming = meetings.filter((m) => new Date(m.whenAt).getTime() >= Date.now() - 60 * 60 * 1000);
 
   return (
-    <div style={css("padding:36px 40px;display:flex;flex-direction:column;gap:32px")}>
+    <div style={css("padding:clamp(16px,4vw,36px) clamp(16px,5vw,40px);display:flex;flex-direction:column;gap:32px")}>
       <div style={css("display:flex;align-items:center;justify-content:space-between")}>
         <div>
           <div style={css("font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#bbc7c6")}>Calendar</div>

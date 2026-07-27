@@ -22,10 +22,19 @@ export default function AppShell({ userName, children }: { userName: string; chi
   const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [navOpen, setNavOpen] = useState(false);
 
   return (
     <div style={css("display:flex;min-height:100dvh;background:#012624")}>
-      <aside style={css("width:220px;flex:none;background:#011d1c;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;padding:24px 16px")}>
+      <div
+        className={"app-sidebar-backdrop" + (navOpen ? " open" : "")}
+        style={css("display:none")}
+        onClick={() => setNavOpen(false)}
+      />
+      <aside
+        className={"app-sidebar" + (navOpen ? " open" : "")}
+        style={css("width:220px;flex:none;background:#011d1c;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;padding:24px 16px")}
+      >
         <div style={css("font-family:var(--font-matter);font-size:15px;font-weight:500;color:#ffffff;padding:0 8px 24px")}>
           Agentic Sales Team
         </div>
@@ -36,6 +45,7 @@ export default function AppShell({ userName, children }: { userName: string; chi
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => setNavOpen(false)}
                 style={css(
                   "display:block;padding:9px 12px;border-radius:6px;font-size:13px;letter-spacing:.02em;font-weight:" +
                     (active ? "500" : "400") +
@@ -67,7 +77,25 @@ export default function AppShell({ userName, children }: { userName: string; chi
       </aside>
 
       <div style={css("flex:1;min-width:0;display:flex;flex-direction:column")}>
-        <header style={css("height:64px;flex:none;display:flex;align-items:center;justify-content:flex-end;padding:0 28px;border-bottom:1px solid rgba(255,255,255,.06)")}>
+        <header style={css("position:relative;height:64px;flex:none;display:flex;align-items:center;justify-content:flex-end;padding:0 14px 0 28px;border-bottom:1px solid rgba(255,255,255,.06)")}>
+          <div
+            className="app-shell-header-left"
+            style={css("display:none;align-items:center;gap:10px;position:absolute;left:14px;top:50%;transform:translateY(-50%)")}
+          >
+            <button
+              className="app-shell-hamburger"
+              onClick={() => setNavOpen((o) => !o)}
+              aria-label="Toggle navigation"
+              style={css("display:none;background:none;border:none;cursor:pointer;color:#edfffe;padding:6px")}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <span style={css("font-family:var(--font-matter);font-size:14px;font-weight:500;color:#ffffff;white-space:nowrap")}>
+              Agentic Sales Team
+            </span>
+          </div>
           <div style={css("display:flex;align-items:center;gap:8px")}>
             {searchOpen && (
               <input
@@ -79,7 +107,7 @@ export default function AppShell({ userName, children }: { userName: string; chi
                 }}
                 placeholder="Search brands, agents…"
                 style={css(
-                  "background:#003734;border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:8px 12px;font-size:13px;color:#edfffe;width:240px;outline:none"
+                  "background:#003734;border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:8px 12px;font-size:13px;color:#edfffe;width:min(240px,38vw);outline:none"
                 )}
               />
             )}

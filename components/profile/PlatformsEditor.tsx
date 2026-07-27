@@ -27,7 +27,7 @@ export default function PlatformsEditor({
   return (
     <div style={css("display:flex;flex-direction:column;gap:10px")}>
       {platforms.map((p, i) => (
-        <div key={i} style={css("display:grid;grid-template-columns:1.1fr 1.1fr 1fr 1fr auto;gap:8px;align-items:center")}>
+        <div key={i} className="platform-row" style={css("display:grid;grid-template-columns:1.1fr 1.1fr 1fr 1fr auto;gap:8px;align-items:center")}>
           <input
             style={css(inputStyle)}
             placeholder="Platform (e.g. TikTok)"

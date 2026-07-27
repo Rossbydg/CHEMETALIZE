@@ -18,7 +18,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { t
   }
 
   return (
-    <div style={css("padding:36px 40px;display:flex;flex-direction:column;gap:28px")}>
+    <div style={css("padding:clamp(16px,4vw,36px) clamp(16px,5vw,40px);display:flex;flex-direction:column;gap:28px")}>
       <div>
         <div style={css("font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#bbc7c6")}>Settings</div>
         <h1 style={css("font-family:var(--font-matter);font-weight:500;font-size:28px;color:#ffffff;margin:8px 0 0")}>Notifications</h1>

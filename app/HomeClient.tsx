@@ -116,7 +116,9 @@ export default function HomeClient({
   const hubLive2 = actLine(acts[1]).slice(0, 90);
 
   const hubCardW = dims.w - 52 - 2;
-  const hubScale = Math.max(0.7, Math.min((dims.h - 250) / 524, (hubCardW - 40) / 760, 1.45));
+  const hubFit = Math.min((dims.h - 250) / 524, (hubCardW - 40) / 760, 1.45);
+  // Below ~640px the 0.7 floor would force the 760px-wide hub wider than the viewport — let it shrink to fit instead.
+  const hubScale = dims.w < 640 ? hubFit : Math.max(0.7, hubFit);
   const teamPills = [{ id: "all", label: "Everyone" }].concat(teams.map((t) => ({ id: t.id, label: t.name })));
 
   return (
