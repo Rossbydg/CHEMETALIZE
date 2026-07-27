@@ -60,14 +60,23 @@ export async function bookDemo(input: BookDemoInput): Promise<BookDemoResult> {
   // No whenLabel stored — this server has no idea what timezone the account owner views the
   // calendar in, so a label baked here would just repeat the same bug in a different spot.
   // The calendar UI already formats whenAt correctly in each viewer's own browser.
-  await db.insert(meetings).values({
-    userId: ownerId,
-    title: `Demo — ${name} (${email})`,
-    kind: "call",
-    whenAt,
-  });
+  const [inserted] = await db
+    .insert(meetings)
+    .values({
+      userId: ownerId,
+      title: `Demo — ${name} (${email})`,
+      kind: "call",
+      whenAt,
+    })
+    .returning({ id: meetings.id });
 
+  // TEMP-DIAGNOSTIC: write the raw failure into this specific row's whenLabel (unused for demo
+  // bookings otherwise) so it can be read directly from the DB — the Vercel log views aren't
+  // surfacing this request at all. Targets inserted.id only, never other rows.
   try {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY is not set in this runtime");
+    }
     // UTC, explicitly labeled as such, since email can't adapt to the reader's timezone —
     // the calendar in the app is the source of truth for "what time is this in my timezone."
     const utcLabel = whenAt.toLocaleString("en-US", {
@@ -87,9 +96,12 @@ export async function bookDemo(input: BookDemoInput): Promise<BookDemoResult> {
         `\nIt's already on your calendar in Agentic Sales Team, shown there in your own local time.`,
       ].join(""),
     });
+    await db.update(meetings).set({ whenLabel: "DIAG: email sent ok" }).where(eq(meetings.id, inserted.id));
   } catch (err) {
     // The booking itself succeeded and is on the calendar — an email hiccup shouldn't undo that.
     console.error("Demo booking email failed", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    await db.update(meetings).set({ whenLabel: `DIAG: ${msg}`.slice(0, 250) }).where(eq(meetings.id, inserted.id));
   }
 
   revalidatePath("/calendar");
